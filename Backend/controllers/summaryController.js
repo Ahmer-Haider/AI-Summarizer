@@ -23,11 +23,9 @@ export const createSummary = async (req, res) => {
         const { prompt, text: manualText } = req.body;
         let content = '';
 
-        // ✅ MODIFIED: This logic now correctly checks for multiple files
         if (req.files && req.files.length > 0) {
-            // Loop through each uploaded file and extract its text
             for (const file of req.files) {
-                content += await extractText(file) + '\n\n'; // Add separator between file contents
+                content += await extractText(file) + '\n\n';
             }
         } else if (manualText) {
             content = manualText;
@@ -52,7 +50,7 @@ export const shareSummary = async (req, res) => {
         await sendSummaryByEmail(summary, recipients, emailBody); 
         res.status(200).json({ message: 'Summary sent successfully!' });
     } catch (error) {
-        console.error('Email Sharing Error:', error);
-        res.status(500).json({ error: 'Failed to send email.' });
+        console.error('Email Sharing Error:', error.message);
+        res.status(500).json({ error: error.message || 'Failed to send email.' });
     }
 };

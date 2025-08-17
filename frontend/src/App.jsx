@@ -9,13 +9,11 @@ const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-
 const ShareIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367-2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" /></svg>;
 const TrashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>;
 
-
 // --- API URL Configuration ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 // --- Main App Component ---
 function App() {
-    // --- State Management ---
     const [text, setText] = useState('');
     const [files, setFiles] = useState([]); 
     const [prompt, setPrompt] = useState('Summarize this document in concise bullet points.');
@@ -30,7 +28,6 @@ function App() {
     const [emailBody, setEmailBody] = useState(''); 
     const fileInputRef = useRef(null);
     
-    // --- Warn user before reloading with uploaded files ---
     useEffect(() => {
         const handleBeforeUnload = (event) => {
             if (files.length > 0) {
@@ -44,7 +41,6 @@ function App() {
         };
     }, [files]);
 
-    // --- Event Handlers ---
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files);
         setFiles(prevFiles => {
@@ -74,7 +70,6 @@ function App() {
         }
     };
 
-    // --- API Call: Generate Summary ---
     const handleGenerateSummary = async () => {
         if (files.length === 0 && !text.trim()) {
             setError('Please upload a file or paste text to summarize.');
@@ -109,7 +104,6 @@ function App() {
         }
     };
     
-    // --- API Call: Share via Email ---
     const handleShare = async () => {
         if (!recipients) return;
         setShareStatus('Sending...');
@@ -134,13 +128,11 @@ function App() {
 
     return (
         <div className="flex flex-col md:flex-row h-screen bg-gray-100 font-sans">
-            {/* --- Left Control Panel --- */}
             <div className="w-full md:w-1/3 bg-white p-8 shadow-lg overflow-y-auto flex flex-col h-screen">
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-800">AI Document Summarizer</h1>
                     <p className="text-gray-500">Supports PDF, DOCX, and Text</p>
                 </header>
-
                 <div className="space-y-6 flex-grow">
                     <div>
                         <label className="text-lg font-semibold text-gray-700">1. Provide Content</label>
@@ -188,7 +180,6 @@ function App() {
                         <textarea id="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} rows="3" className="w-full mt-2 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
                     </div>
                 </div>
-
                 <div className="mt-auto pt-6">
                     <button onClick={handleGenerateSummary} disabled={isLoading || (files.length === 0 && !text)} className="w-full bg-green-600 text-white font-bold py-4 px-4 rounded-lg hover:bg-green-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed">
                         {isLoading ? 'Processing Document...' : '✨ Generate Summary'}
@@ -196,8 +187,6 @@ function App() {
                     {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
                 </div>
             </div>
-
-            {/* --- Right Display Panel --- */}
             <div className="w-full md:w-2/3 p-8 flex flex-col h-screen">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-gray-800">Generated Summary</h2>
@@ -224,7 +213,6 @@ function App() {
                                         transition duration-300`}
                         />
                     )}
-                    
                     {!isLoading && summary && (
                         <div className="absolute bottom-4 right-4 flex space-x-2">
                             <button onClick={() => setIsEditing(!isEditing)} className={`flex items-center px-3 py-2 text-sm font-semibold rounded-md transition ${isEditing ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
@@ -240,8 +228,6 @@ function App() {
                     )}
                 </div>
             </div>
-
-            {/* --- Share Modal --- */}
             {isShareModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">

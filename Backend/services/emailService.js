@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { htmlToText } from 'html-to-text'; // Import a library to convert HTML to text
+import { htmlToText } from 'html-to-text';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -9,10 +9,17 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// You'll need to install this helper library first:
-// npm install html-to-text
+const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+};
 
 export const sendSummaryByEmail = async (summary, recipients, emailBody) => {
+    const invalidEmails = recipients.filter(email => !validateEmail(email));
+    if (invalidEmails.length > 0) {
+        throw new Error(`Invalid email address format: ${invalidEmails.join(', ')}`);
+    }
+
     const htmlContent = `
         <div style="font-family: sans-serif; font-size: 16px; color: #333;">
             <p>Hello,</p>
@@ -31,9 +38,8 @@ export const sendSummaryByEmail = async (summary, recipients, emailBody) => {
         to: recipients.join(','),
         subject: 'Your AI-Generated Summary',
         html: htmlContent,
-        // ✅ ADD a plain text version of the email
         text: htmlToText(htmlContent),
     };
-
+    
     await transporter.sendMail(mailOptions);
 };
